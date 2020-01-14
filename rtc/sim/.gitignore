@@ -1,0 +1,11 @@
+*.pyc
+*.tar.gz
+figs/
+figs/*
+test_results/*
+test_results/
+results/
+models/
+*.log
+*.png
+recent/
