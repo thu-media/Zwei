@@ -24,7 +24,9 @@ Intuitively, state-of-the-art reinforcement learning algorithm PPO can tackle th
 Now let's change the challenge to: **1) touch the left margin, and 2) further, achieve the original goal.** We can see that traditional reinforcement learning fails to achieve it.
 In contrast, Zwei can perfectly solve the problem, see the figure below.
 
-![PPO](demo/ppo.gif)![Zwei](demo/zwei.gif)
+<center class="mc">
+    <img src="demo/ppo.gif" width="200"/><img src="demo/zwei.gif" width="200"/>
+</center>
 
 ## Cartpole
 
