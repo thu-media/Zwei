@@ -43,6 +43,12 @@ We provide two types of ABR scenarios, i.e., ABR-4K and ABR-HD. Notice that Zwei
 Consider, if we were the content provider and currently we had multiple content delivery networks (CDNs) with different costs and performance, how
 to schedule the users’ requests to the proper CDN, aiming to provide live streaming services withing less stalling ratio and lower cost? In common, we call that crowd-sourced live streaming(CLS).
 
+### Experimental results
+
+We plot the CLS's training process below. The point who plotted on the down-left corner represents better policy.
+
+![CLS](demo/lts.gif)
+
 ## RTC (Real-time Communication)
 
 Besides, in our daily life, we usually chat with other users instantly via a video call namely Real-Time video Communication (RTC). The RTC system consists of a sender and a receiver. The sender deploys a UDP socket channel and sends the encoded video packets to the receiver. The receiver then feeds the messages back to the
