@@ -25,7 +25,7 @@ Now let's change the challenge to: **1) touch the left margin, and 2) further, a
 In contrast, Zwei can perfectly solve the problem, see the figure below.
 
 <center class="mc">
-    <img src="demo/ppo.gif" width="200"/><img src="demo/zwei.gif" width="200"/>
+    <img src="demo/ppo.gif" width="250"><img src="demo/zwei.gif" width="250">
 </center>
 
 ## Cartpole
