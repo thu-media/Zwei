@@ -25,7 +25,7 @@ Now let's change the challenge to: **1) touch the left margin, and 2) further, a
 In contrast, Zwei can perfectly solve the problem, see the figure below.
 
 <p align="center">
-    <img src="demo/ppo.gif" width="250"><img src="demo/zwei.gif" width="250">
+    <img src="demo/ppo.gif" width="300"><img src="demo/zwei.gif" width="300">
 </p>
 
 ## Cartpole
@@ -49,7 +49,7 @@ to schedule the users’ requests to the proper CDN, aiming to provide live stre
 We plot the CLS's training process below. The point who plotted on the down-left corner represents better policy.
 
 <p align="center">
-    <img src="demo/lts.gif" width="250"><img src="demo/zwei.gif" width="250">
+    <img src="demo/lts.gif" width="300">
 </p>
 
 ## RTC (Real-time Communication)
