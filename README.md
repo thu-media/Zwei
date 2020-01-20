@@ -24,9 +24,9 @@ Intuitively, state-of-the-art reinforcement learning algorithm PPO can tackle th
 Now let's change the challenge to: **1) touch the left margin, and 2) further, achieve the original goal.** We can see that traditional reinforcement learning fails to achieve it.
 In contrast, Zwei can perfectly solve the problem, see the figure below.
 
-<center class="mc">
+<p align="center">
     <img src="demo/ppo.gif" width="250"><img src="demo/zwei.gif" width="250">
-</center>
+</p>
 
 ## Cartpole
 
@@ -48,7 +48,9 @@ to schedule the users’ requests to the proper CDN, aiming to provide live stre
 
 We plot the CLS's training process below. The point who plotted on the down-left corner represents better policy.
 
-![CLS](demo/lts.gif)
+<p align="center">
+    <img src="demo/lts.gif" width="250"><img src="demo/zwei.gif" width="250">
+</p>
 
 ## RTC (Real-time Communication)
 
