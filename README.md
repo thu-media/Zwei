@@ -1,5 +1,7 @@
 # Zwei
 
+View technical paper here. [PDF](Zwei-technical.pdf).
+
 Video transmission algorithms should be designed to transmit video streams by balancing several contradicted metrics on demand. However, existing techniques have largely used a goal that linearly combines several weighted metrics, who often restricted mutually, which might eventually generalize a strategy that violates the original demand.
 
 Zwei is self-play reinforcement learning algorithm that aims to tackle the video transmission tasks, which can prefectly train a policy without reward engineering.
