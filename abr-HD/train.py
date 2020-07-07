@@ -218,12 +218,14 @@ def agent(agent_id, net_params_queue, exp_queue):
                         s_batch, a_batch, p_batch, bitrate_batch, rebuffer_batch = tmp_buffer[i]
                         bit_rate_ = np.mean(bitrate_batch)
                         rebuffer_ = np.mean(rebuffer_batch)
-                        tmp_agent_results.append([bit_rate_, rebuffer_])
+                        smoothness_ = np.abs(np.diff(bitrate_batch))
+                        tmp_agent_results.append([bit_rate_, rebuffer_, smoothness_])
                         # j
                         s_batch, a_batch, p_batch, bitrate_batch, rebuffer_batch = tmp_buffer[j]
                         bit_rate_ = np.mean(bitrate_batch)
                         rebuffer_ = np.mean(rebuffer_batch)
-                        tmp_agent_results.append([bit_rate_, rebuffer_])
+                        smoothness_ = np.abs(np.diff(bitrate_batch))
+                        tmp_agent_results.append([bit_rate_, rebuffer_, smoothness_])
                         # battle
                         w_rate_imm = rules.rules(tmp_agent_results)[0]
                         w_arr.append(w_rate_imm)

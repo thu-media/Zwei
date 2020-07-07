@@ -4,7 +4,19 @@ EPS = 100.0
 
 
 def rules(agent_result):
-    return pareto_rules(agent_result)
+    return qoe_rules(agent_result)
+
+def qoe_rules(agent_results):
+    r_0, b_0, s_0 = agent_results[0]
+    r_1, b_1, s_1 = agent_results[1]
+    qoe0_ = r_0 / 1000. - 4.3 * b_0 - s_0 / 1000.
+    qoe1_ = r_1 / 1000. - 4.3 * b_1 - s_1 / 1000.
+    _tmp = [-1., -1.]
+    if np.abs(qoe0_ - qoe1_) < 1e-2:
+        return [0., 0.]
+    else:
+        _tmp[np.argmax([qoe0_, qoe1_])] = 1.
+        return _tmp
 
 def multi_rules(agent_result):
     p = 0
@@ -16,8 +28,8 @@ def multi_rules(agent_result):
     return p
     
 def pareto_rules(agent_results):
-    r_0, b_0 = agent_results[0]
-    r_1, b_1 = agent_results[1]
+    r_0, b_0, _ = agent_results[0]
+    r_1, b_1, _ = agent_results[1]
     _tmp = [-1., -1.]
     if np.abs(b_0 - b_1) < 1e-2 and np.abs(r_0 - r_1) < 10.:
         _tmp = [0., 0.]
