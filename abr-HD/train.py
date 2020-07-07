@@ -57,7 +57,7 @@ def testing(epoch, pool, nn_model, log_file):
         agent_result = []
         entropy = []
         for _agent in agent_list:
-            _f = open('./' + TEST_LOG_FOLDER + 'log_sim_rl_' + _trace, 'r')
+            _f = open('./' + TEST_LOG_FOLDER + 'log_sim_zwei_' + _trace, 'r')
             _bitrate, _rebuffer = [], []
             for lines in _f:
                 #110.64486915972032	2850	19.235901151929067	0.0	1341201	5257.885326692943	0.5	2.85
@@ -68,9 +68,10 @@ def testing(epoch, pool, nn_model, log_file):
                     _rebuffer.append(float(sp[3]))
             _bitrate_mean = np.mean(_bitrate[1:])
             _rebuffer_mean = np.mean(_rebuffer[1:])
+            _smo_mean = np.mean(np.abs(np.diff(_bitrate[1:])))
             
             agent_result.append(
-                (_bitrate_mean, _rebuffer_mean))
+                (_bitrate_mean, _rebuffer_mean, _smo_mean))
             _trace_result.append(agent_result)
             _f.close()
             entropies.append(np.mean(entropy[1:]))
@@ -218,13 +219,13 @@ def agent(agent_id, net_params_queue, exp_queue):
                         s_batch, a_batch, p_batch, bitrate_batch, rebuffer_batch = tmp_buffer[i]
                         bit_rate_ = np.mean(bitrate_batch)
                         rebuffer_ = np.mean(rebuffer_batch)
-                        smoothness_ = np.abs(np.diff(bitrate_batch))
+                        smoothness_ = np.mean(np.abs(np.diff(bitrate_batch)))
                         tmp_agent_results.append([bit_rate_, rebuffer_, smoothness_])
                         # j
                         s_batch, a_batch, p_batch, bitrate_batch, rebuffer_batch = tmp_buffer[j]
                         bit_rate_ = np.mean(bitrate_batch)
                         rebuffer_ = np.mean(rebuffer_batch)
-                        smoothness_ = np.abs(np.diff(bitrate_batch))
+                        smoothness_ = np.mean(np.abs(np.diff(bitrate_batch)))
                         tmp_agent_results.append([bit_rate_, rebuffer_, smoothness_])
                         # battle
                         w_rate_imm = rules.rules(tmp_agent_results)[0]

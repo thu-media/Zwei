@@ -3,7 +3,7 @@ import numpy as np
 from rules import rules, update_elo, update_elo_2
 
 class tracepool(object):
-    def __init__(self, testdir='./hd-fs-test/'):
+    def __init__(self, testdir='./cooked_test_traces/'):
         self.test_dir = testdir
         self.abr_list = ['rb', 'bb', 'rmpc', 'hyb', 'rl']
         #[sabre.ThroughputRule, sabre.ConstrainRule]
@@ -35,8 +35,8 @@ class tracepool(object):
                         _rebuffer.append(float(sp[3]))
                 _bitrate_mean = np.mean(_bitrate[1:])
                 _rebuffer_mean = np.mean(_rebuffer[1:])
-
-                self.sample_list[_index].append([_bitrate_mean, _rebuffer_mean])
+                _smo_mean = np.mean(np.abs(np.diff(_bitrate[1:])))
+                self.sample_list[_index].append([_bitrate_mean, _rebuffer_mean, _smo_mean])
 
         for _index0 in range(len(self.abr_list)):
             _battle = []
