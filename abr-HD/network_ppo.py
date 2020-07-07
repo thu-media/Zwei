@@ -8,7 +8,6 @@ import tflearn
 
 FEATURE_NUM = 128
 ACTION_EPS = 1e-4
-GAMMA = 0.99
 # PPO2
 EPS = 0.2
 
@@ -37,11 +36,11 @@ class Network():
 
             pi_net = tflearn.fully_connected(
                 merge_net, FEATURE_NUM, activation='relu')
-            value_net = tflearn.fully_connected(
-                merge_net, FEATURE_NUM, activation='relu')
             pi = tflearn.fully_connected(pi_net, self.a_dim, activation='softmax') 
-            value = tflearn.fully_connected(value_net, 1, activation='linear')
-            return pi, value
+            val_net = tflearn.fully_connected(
+                merge_net, FEATURE_NUM, activation='relu')
+            val = tflearn.fully_connected(val_net, 1, activation='tanh') 
+            return pi, val
             
     def get_network_params(self):
         return self.sess.run(self.network_params)
@@ -56,6 +55,7 @@ class Network():
                 tf.reduce_sum(tf.multiply(pi_old, acts), reduction_indices=1, keepdims=True)
 
     def __init__(self, sess, state_dim, action_dim, learning_rate):
+        self._entropy = 0.5
         self.training_epo = 5
         self.s_dim = state_dim
         self.a_dim = action_dim
@@ -66,8 +66,7 @@ class Network():
         self.old_pi = tf.placeholder(tf.float32, [None, self.a_dim])
         self.acts = tf.placeholder(tf.float32, [None, self.a_dim])
         self.entropy_weight = tf.placeholder(tf.float32)
-        self.pi, self.val = self.CreateNetwork(inputs=self.inputs)
-        # self.pi = self.CreateNetwork(inputs = self.inputs)
+        self.pi, self.val = self.CreateNetwork(inputs = self.inputs)
         self.real_out = tf.clip_by_value(self.pi, ACTION_EPS, 1. - ACTION_EPS)
         self.log_prob = tf.log(tf.reduce_sum(tf.multiply(self.real_out, self.acts), reduction_indices=1, keepdims=True))
         self.entropy = tf.multiply(self.real_out, tf.log(self.real_out))
@@ -94,8 +93,6 @@ class Network():
             + self.entropy_weight * tf.reduce_sum(self.entropy)
         
         self.optimize = tf.train.AdamOptimizer(self.lr_rate).minimize(self.loss)
-        self.val_loss = tflearn.mean_square(self.val, self.R)
-        self.val_opt = tf.train.AdamOptimizer(self.lr_rate * 10.).minimize(self.val_loss)
 
     def predict(self, input):
         action = self.sess.run(self.real_out, feed_dict={
@@ -103,44 +100,18 @@ class Network():
         })
         return action[0]
 
+    def set_entropy_decay(self, decay = 0.8):
+        self._entropy *= decay
+
     def get_entropy(self, step):
-        return 0.1
-        #if step < 20000:
-        #    return 5.
-        #elif step < 50000:
-        #    return 3.
-        #elif step < 70000:
-        #    return 1.
-        #elif step < 90000:
-        #    return 0.5
-        #elif step < 120000:
-        #    return 0.3
-        #else:
-        #    return 0.1
+        return self._entropy
 
     def train(self, s_batch, a_batch, p_batch, v_batch, epoch=100):
         s_batch, a_batch, p_batch, v_batch = tflearn.data_utils.shuffle(s_batch, a_batch, p_batch, v_batch)
-        self.sess.run([self.optimize, self.val_opt], feed_dict={
-        # self.sess.run(self.optimize, feed_dict={
+        self.sess.run(self.optimize, feed_dict={
             self.inputs: s_batch,
             self.acts: a_batch,
             self.R: v_batch, 
             self.old_pi: p_batch,
             self.entropy_weight: self.get_entropy(epoch)
         })
-
-    def compute_v(self, s_batch, a_batch, r_batch, terminal=True):
-        ba_size = len(s_batch)
-        R_batch = np.zeros([len(r_batch), 1])
-
-        if terminal:
-            R_batch[-1, 0] = 0  # terminal state
-        else:    
-            v_batch = self.sess.run(self.val, feed_dict={
-                self.inputs: s_batch
-            })
-            R_batch[-1, 0] = v_batch[-1, 0]  # boot strap from last state
-        for t in reversed(range(ba_size - 1)):
-            R_batch[t, 0] = r_batch[t] + GAMMA * R_batch[t + 1, 0]
-
-        return list(R_batch)

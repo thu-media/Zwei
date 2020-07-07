@@ -1,7 +1,7 @@
 import os
 
 
-COOKED_TRACE_FOLDER = './hd_fs-train/'
+COOKED_TRACE_FOLDER = './cooked_traces/'
 
 
 def load_trace(cooked_trace_folder=COOKED_TRACE_FOLDER):

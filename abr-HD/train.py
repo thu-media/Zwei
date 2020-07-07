@@ -26,10 +26,10 @@ RANDOM_SEED = 42
 RAND_RANGE = 10000
 SUMMARY_DIR = './results'
 MODEL_DIR = './models'
-TRAIN_TRACES = './hd_fs-train/'
+TRAIN_TRACES = './cooked_traces/'
 TEST_LOG_FOLDER = './test_results/'
 LOG_FILE = './results/log'
-BATTLE_ROUND = 32
+BATTLE_ROUND = 16
 
 # create result directory
 if not os.path.exists(SUMMARY_DIR):

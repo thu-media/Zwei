@@ -14,7 +14,7 @@ S_LEN = 8  # take how many frames in the past
 A_DIM = 6
 ACTOR_LR_RATE = 0.0001
 CRITIC_LR_RATE = 0.001
-VIDEO_BIT_RATE = [300., 750., 1200., 1850., 2850., 4300.]
+VIDEO_BIT_RATE = [200., 600., 1500., 4000., 8000., 12000.]
 BUFFER_NORM_FACTOR = 10.0
 CHUNK_TIL_VIDEO_END_CAP = 49.0
 M_IN_K = 1000.0
@@ -24,7 +24,7 @@ DEFAULT_QUALITY = 1  # default video quality without agent
 RANDOM_SEED = 42
 RAND_RANGE = 1000
 LOG_FILE = './norway/log_sim_zwei'
-TEST_TRACES = './cooked_test_traces/'
+TEST_TRACES = './hd-fs-test/'
 # log in format of time_stamp bit_rate buffer_size rebuffer_time chunk_size download_time reward
 NN_MODEL = sys.argv[1]
 
