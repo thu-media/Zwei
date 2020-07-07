@@ -4,7 +4,8 @@ EPS = 100.0
 
 
 def rules(agent_result):
-    return qoe_rules(agent_result)
+    return pareto_rules(agent_result)
+    #qoe_rules(agent_result)
 
 def qoe_rules(agent_results):
     r_0, b_0, s_0 = agent_results[0]
