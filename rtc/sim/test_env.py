@@ -42,18 +42,6 @@ class NetworkEnv:
 
         self.last_state = np.zeros((S_INFO, S_LEN))
         
-    def fec(self, rtt, loss):
-        delta = 140. / (rtt * 1000.)
-        alpha = loss ** (1 + delta)
-        if alpha < 0.02:
-            return 0.2
-        elif alpha < 0.05:
-            return 0.3
-        elif alpha < 0.1:
-            return 0.5
-        else:
-            return 0.7
-
     def reset(self):
         if self.delay_queue is not None:
             self.delay_queue.clear()
