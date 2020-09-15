@@ -4,8 +4,8 @@ import logging
 import os
 import sys
 from abr import ABREnv
-import network_ppo_naive as network
-# import network_ppo as network
+# import network_ppo_naive as network
+import lsac as network
 import tensorflow as tf
 import rules
 import tracepool
@@ -16,18 +16,18 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 S_DIM = [6, 8]
 A_DIM = 6
-ACTOR_LR_RATE =1e-3
+ACTOR_LR_RATE =1e-4
 NUM_AGENTS = 12
 TRAIN_SEQ_LEN = 300  # take as a train batch
 TRAIN_EPOCH = 1000000
 MODEL_SAVE_INTERVAL = 100
 RANDOM_SEED = 42
 RAND_RANGE = 10000
-SUMMARY_DIR = './results'
+SUMMARY_DIR = './lsac-1e-3'
 MODEL_DIR = './models'
 TRAIN_TRACES = './cooked_traces/'
 TEST_LOG_FOLDER = './test_results/'
-LOG_FILE = './results/log'
+LOG_FILE = './lsac-1e-3/log'
 BATTLE_ROUND = 16
 
 # create result directory
