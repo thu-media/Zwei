@@ -24,15 +24,20 @@ class Network():
                 inputs[:, 3:4, :], FEATURE_NUM, 4, activation='relu')
             split_4 = tflearn.conv_1d(
                 inputs[:, 4:5, :self.a_dim], FEATURE_NUM, 4, activation='relu')
-            split_5 = tflearn.fully_connected(
-                inputs[:, 5:6, -1], FEATURE_NUM, activation='relu')
+            split_5 = tflearn.conv_1d(
+                inputs[:, 5:6, :self.a_dim], FEATURE_NUM, 4, activation='relu')
+            split_6 = tflearn.fully_connected(
+                inputs[:, 6:7, -1], FEATURE_NUM, activation='relu')
 
             split_2_flat = tflearn.flatten(split_2)
             split_3_flat = tflearn.flatten(split_3)
             split_4_flat = tflearn.flatten(split_4)
+            split_5_flat = tflearn.flatten(split_5)
 
             merge_net = tflearn.merge(
-                [split_0, split_1, split_2_flat, split_3_flat, split_4_flat, split_5], 'concat')
+                [split_0, split_1, split_2_flat, \
+                split_3_flat, split_4_flat, \
+                split_5_flat, split_6], 'concat')
 
             pi_net = tflearn.fully_connected(
                 merge_net, FEATURE_NUM, activation='relu')

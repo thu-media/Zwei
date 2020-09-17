@@ -55,20 +55,25 @@ class ABREnv():
         bit_rate = self.last_bit_rate
         delay, sleep_time, self.buffer_size, rebuf, \
             video_chunk_size, next_video_chunk_sizes, \
-            end_of_video, video_chunk_remain = \
+            next_video_chunk_vmaf, \
+            end_of_video, video_chunk_remain, \
+            vmaf = \
             self.net_env.get_video_chunk(bit_rate)
+
         state = np.roll(self.state, -1, axis=1)
 
         # this should be S_INFO number of terms
-        state[0, -1] = VIDEO_BIT_RATE[bit_rate] / \
-            float(np.max(VIDEO_BIT_RATE))  # last quality
+        state[0, -1] = vmaf / 100.
+        #VIDEO_BIT_RATE[bit_rate] / \
+            #float(np.max(VIDEO_BIT_RATE))  # last quality
         state[1, -1] = self.buffer_size / BUFFER_NORM_FACTOR  # 10 sec
         state[2, -1] = float(video_chunk_size) / \
             float(delay) / M_IN_K  # kilo byte / ms
         state[3, -1] = float(delay) / M_IN_K / BUFFER_NORM_FACTOR  # 10 sec
         state[4, :A_DIM] = np.array(
             next_video_chunk_sizes) / M_IN_K / M_IN_K  # mega byte
-        state[5, -1] = np.minimum(video_chunk_remain,
+        state[5, :A_DIM] = np.array(next_video_chunk_vmaf) / 100.
+        state[6, -1] = np.minimum(video_chunk_remain,
                                   CHUNK_TIL_VIDEO_END_CAP) / float(CHUNK_TIL_VIDEO_END_CAP)
 
         self.state = state
@@ -84,7 +89,9 @@ class ABREnv():
         # this is to make the framework similar to the real
         delay, sleep_time, self.buffer_size, rebuf, \
             video_chunk_size, next_video_chunk_sizes, \
-            end_of_video, video_chunk_remain = \
+            next_video_chunk_vmaf, \
+            end_of_video, video_chunk_remain, \
+            vmaf = \
             self.net_env.get_video_chunk(bit_rate)
 
         self.time_stamp += delay  # in ms
@@ -100,17 +107,19 @@ class ABREnv():
         state = np.roll(self.state, -1, axis=1)
 
         # this should be S_INFO number of terms
-        state[0, -1] = VIDEO_BIT_RATE[bit_rate] / \
-            float(np.max(VIDEO_BIT_RATE))  # last quality
+        state[0, -1] = vmaf / 100.
+        #VIDEO_BIT_RATE[bit_rate] / \
+            #float(np.max(VIDEO_BIT_RATE))  # last quality
         state[1, -1] = self.buffer_size / BUFFER_NORM_FACTOR  # 10 sec
         state[2, -1] = float(video_chunk_size) / \
             float(delay) / M_IN_K  # kilo byte / ms
         state[3, -1] = float(delay) / M_IN_K / BUFFER_NORM_FACTOR  # 10 sec
         state[4, :A_DIM] = np.array(
             next_video_chunk_sizes) / M_IN_K / M_IN_K  # mega byte
-        state[5, -1] = np.minimum(video_chunk_remain,
+        state[5, :A_DIM] = np.array(next_video_chunk_vmaf) / 100.
+        state[6, -1] = np.minimum(video_chunk_remain,
                                   CHUNK_TIL_VIDEO_END_CAP) / float(CHUNK_TIL_VIDEO_END_CAP)
 
         self.state = state
         #observation, reward, done, info = env.step(action)
-        return state, reward, end_of_video, {'bitrate': VIDEO_BIT_RATE[bit_rate], 'rebuffer': rebuf}
+        return state, reward, end_of_video, {'bitrate': vmaf, 'rebuffer': rebuf}

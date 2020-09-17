@@ -14,7 +14,8 @@ LINK_RTT = 80  # millisec
 PACKET_SIZE = 1500  # bytes
 NOISE_LOW = 0.9
 NOISE_HIGH = 1.1
-VIDEO_SIZE_FILE = './envivo/video_size_'
+VIDEO_SIZE_FILE = './envivio/size/video_size_'
+VIDEO_QUALITY_FILE = './envivio/vmaf/video_'
 
 
 class Environment:
@@ -48,6 +49,13 @@ class Environment:
                 for line in f:
                     self.video_size[bitrate].append(int(line.split()[0]))
 
+        self.video_vmaf = {}  # in bytes
+        for bitrate in range(BITRATE_LEVELS):
+            self.video_size[bitrate] = []
+            with open(VIDEO_QUALITY_FILE + str(bitrate)) as f:
+                for line in f:
+                    self.video_size[bitrate].append(int(line.split()[0]))
+
     def randomize(self):
         # pick a random trace file
         self.trace_idx = np.random.randint(len(self.all_cooked_time))
@@ -71,7 +79,8 @@ class Environment:
         assert quality < BITRATE_LEVELS
 
         video_chunk_size = self.video_size[quality][self.video_chunk_counter]
-        
+        video_chunk_vmaf = self.video_vmaf[quality][self.video_chunk_counter]
+
         # use the delivery opportunity in mahimahi
         delay = 0.0  # in ms
         video_chunk_counter_sent = 0  # in bytes
@@ -180,11 +189,17 @@ class Environment:
         for i in range(BITRATE_LEVELS):
             next_video_chunk_sizes.append(self.video_size[i][self.video_chunk_counter])
 
+        next_video_chunk_vmaf = []
+        for i in range(BITRATE_LEVELS):
+            next_video_chunk_vmaf.append(self.video_vmaf[i][self.video_chunk_counter])
+
         return delay, \
             sleep_time, \
             return_buffer_size / MILLISECONDS_IN_SECOND, \
             rebuf / MILLISECONDS_IN_SECOND, \
             video_chunk_size, \
             next_video_chunk_sizes, \
+            next_video_chunk_vmaf, \
             end_of_video, \
-            video_chunk_remain
+            video_chunk_remain, \
+            video_chunk_vmaf

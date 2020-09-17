@@ -5,11 +5,11 @@ import numpy as np
 import tensorflow as tf
 import load_trace
 # import network_ppo_naive as network
-import lsac as network
+import dualppo as network
 import fixed_env as env
 
 
-S_INFO = 6  # bit_rate, buffer_size, next_chunk_size, bandwidth_measurement(throughput and time), chunk_til_video_end
+S_INFO = 7  # bit_rate, buffer_size, next_chunk_size, bandwidth_measurement(throughput and time), chunk_til_video_end
 S_LEN = 8  # take how many frames in the past
 A_DIM = 6
 ACTOR_LR_RATE = 0.0001

@@ -5,7 +5,7 @@ import os
 import sys
 from abr import ABREnv
 # import network_ppo_naive as network
-import lsac as network
+import dualppo as network
 import tensorflow as tf
 import rules
 import tracepool
@@ -14,7 +14,7 @@ import itertools
 os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-S_DIM = [6, 8]
+S_DIM = [7, 8]
 A_DIM = 6
 ACTOR_LR_RATE =1e-4
 NUM_AGENTS = 12
