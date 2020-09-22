@@ -4,4 +4,8 @@ test_results/
 *.txt
 results/
 rl.tar.gz
-
+dualppo*/
+dppo*/
+a2c*/
+lsac*/
+*.png

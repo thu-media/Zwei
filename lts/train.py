@@ -4,7 +4,7 @@ import logging
 import os
 import sys
 from ltsenv import LTSEnv
-import network
+import dualppo as network
 import tensorflow as tf
 import rules
 
@@ -15,25 +15,23 @@ S_DIM = [8, 20]
 A_DIM = 13
 ACTOR_LR_RATE =1e-4
 CRITIC_LR_RATE = 1e-3
-NUM_AGENTS = 25
+NUM_AGENTS = 12
 TRAIN_SEQ_LEN = 1440  # take as a train batch
 TRAIN_EPOCH = 1000000
 MODEL_SAVE_INTERVAL = 20
 RANDOM_SEED = 42
-RAND_RANGE = 10000
 SUMMARY_DIR = './results'
 MODEL_DIR = './models'
 TRAIN_TRACES = './cooked_traces/'
 TEST_LOG_FOLDER = './test_results/'
 LOG_FILE = './results/log'
-BATCH_SIZE = 128
+BATTLE_ROUND = 16
 
 # create result directory
 if not os.path.exists(SUMMARY_DIR):
     os.makedirs(SUMMARY_DIR)
     
 NN_MODEL = None
-EPS = 0.8
 
 def testing(epoch, pool, nn_model, log_file):
     # clean up the test results folder
@@ -80,13 +78,16 @@ def central_agent(net_params_queues, exp_queues):
             for i in range(NUM_AGENTS):
                 net_params_queues[i].put(actor_net_params)
 
-            s, a, g = [], [], []
+            s, a, p, g = [], [], [], []
             for i in range(NUM_AGENTS):
-                s_, a_, g_ = exp_queues[i].get()
+                s_, a_, p_, g_ = exp_queues[i].get()
                 s += s_
                 a += a_
+                p += p_
                 g += g_
-            actor.train(s, a, g)
+
+            for _ in range(actor.training_epo):
+                actor.train(s, a, p, g)
 
             if epoch % MODEL_SAVE_INTERVAL == 0:
                 # Save the neural net parameters to disk.
@@ -113,53 +114,62 @@ def agent(agent_id, net_params_queue, exp_queue):
         for epoch in range(TRAIN_EPOCH):
             env.reset_trace()
             tmp_buffer = []
-            for i in range(2):
+            for i in range(BATTLE_ROUND):
                 obs = env.reset()
                 s_batch, a_batch, workload_batch, ratio_batch = [], [], [], []
+                p_batch = []
                 for step in range(TRAIN_SEQ_LEN):
                     s_batch.append(obs)
                     action_prob = actor.predict(
                         np.reshape(obs, (1, S_DIM[0], S_DIM[1])))
-                    # e-greedy
-                    # if np.random.random() < EPS:
-                    #     bit_rate = np.argmax(action_prob)
-                    # else:
-                    #     bit_rate = np.random.randint(A_DIM)
-                    # action_prob_ = np.exp(action_prob) / np.sum(np.exp(action_prob))
-                    # print(action_prob)
-                    action_cumsum = np.cumsum(action_prob)
-                    act = (action_cumsum > np.random.randint(
-                        1, RAND_RANGE) / float(RAND_RANGE)).argmax()
+
+                    noise = np.random.gumbel(size=len(action_prob))
+                    act = np.argmax(np.log(action_prob) + noise)
+
                     obs, rew, done, info = env.step(act)
 
                     action_vec = np.zeros(A_DIM)
                     action_vec[act] = 1
                     a_batch.append(action_vec)
+                    p_batch.append(action_prob)
 
                     workload_batch.append(info['workload'])
                     ratio_batch.append(0. - rew)
                     if done:
                         break
                 tmp_buffer.append(
-                    [s_batch, a_batch, workload_batch, ratio_batch])
-
-            tmp_agent_results = []
-            for t in tmp_buffer:
-                s_batch, a_batch, workload_batch, ratio_batch = t
-                workload_ = np.mean(workload_batch)
-                ratio_ = np.mean(ratio_batch)
-                tmp_agent_results.append([workload_, ratio_])
-
-            g_ = rules.rules(tmp_agent_results)
-            s, a, g = [], [], []
-            for t, p in zip(tmp_buffer, g_):
-                s_batch, a_batch, workload_batch, ratio_batch = t
-                for s_, a_ in zip(s_batch, a_batch):
+                    [s_batch, a_batch, p_batch, workload_batch, ratio_batch])
+                    
+            s, a, p, g = [], [], [], []
+            for i in range(BATTLE_ROUND):
+                w_arr = []
+                for j in range(BATTLE_ROUND):
+                    if i != j:
+                        tmp_agent_results = []
+                        # i
+                        s_batch, a_batch, p_batch, workload_batch, ratio_batch = tmp_buffer[i]
+                        bit_rate_ = np.mean(workload_batch)
+                        rebuffer_ = np.mean(ratio_batch)
+                        smoothness_ = np.mean(np.abs(np.diff(workload_batch)))
+                        tmp_agent_results.append([bit_rate_, rebuffer_, smoothness_])
+                        # j
+                        s_batch, a_batch, p_batch, workload_batch, ratio_batch = tmp_buffer[j]
+                        bit_rate_ = np.mean(workload_batch)
+                        rebuffer_ = np.mean(ratio_batch)
+                        smoothness_ = np.mean(np.abs(np.diff(workload_batch)))
+                        tmp_agent_results.append([bit_rate_, rebuffer_, smoothness_])
+                        # battle
+                        w_rate_imm = rules.rules(tmp_agent_results)[0]
+                        w_arr.append(w_rate_imm)
+                w_rate = np.sum(w_arr) / len(w_arr)
+                s_batch, a_batch, p_batch, workload_batch, ratio_batch = tmp_buffer[i]
+                # Policy invariance under reward 
+                for s_, a_, p_ in zip(s_batch, a_batch, p_batch):
                     s.append(s_)
                     a.append(a_)
-                    g.append([p])
-
-            exp_queue.put([s, a, g])
+                    p.append(p_)
+                    g.append([w_rate])
+            exp_queue.put([s, a, p, g])
 
             actor_net_params = net_params_queue.get()
             actor.set_network_params(actor_net_params)

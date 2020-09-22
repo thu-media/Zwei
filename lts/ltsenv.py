@@ -15,7 +15,7 @@ ACTION_SPACE = np.array([[0,0,0],[0.01,0,0],[0.05,0,0],[0.1,0,0],[0.2,0,0], \
                           [0,0.01,0], [0,0.05,0],[0,0.1,0],[0,0.2,0],\
                           [0,0,0.01], [0,0,0.05],[0,0,0.1],[0,0,0.2]])
 
-class manmade_peak:
+class synthetic_peak:
     def __init__(self, peak, block_ratio, peak_ratio, peak_workload):
         self.peak = np.array(peak)
         self.block_ratio = np.array(block_ratio)
@@ -50,9 +50,9 @@ class LTSEnv():
         self._iter = np.random.randint(0, self.trace_len)
         self._iter_rand = self._iter
         self.ratio = np.array([0.35, 0.35, 0.3])
-        self.model1 = manmade_peak(5000, 0.4, 1.0, 20000)
-        self.model2 = manmade_peak(11000, 0.12, 1.0, 30000)
-        self.model3 = manmade_peak(30000, 0.25, 1.0, 75000)
+        self.model1 = synthetic_peak(5000, 0.4, 1.0, 20000)
+        self.model2 = synthetic_peak(11000, 0.12, 1.0, 30000)
+        self.model3 = synthetic_peak(30000, 0.25, 1.0, 75000)
         self.model_use1 = self.model1
         self.model_use2 = self.model2
         self.model_use3 = self.model3
@@ -72,9 +72,9 @@ class LTSEnv():
         #np.random.randint(0, self.trace_len)
         self._iter_rand = self._iter
         self.ratio = np.array([0.35, 0.35, 0.3])
-        self.model1 = manmade_peak(5000, 0.4, 1.0, 20000)
-        self.model2 = manmade_peak(11000, 0.12, 1.0, 30000)
-        self.model3 = manmade_peak(30000, 0.25, 1.0, 75000)
+        self.model1 = synthetic_peak(5000, 0.4, 1.0, 20000)
+        self.model2 = synthetic_peak(11000, 0.12, 1.0, 30000)
+        self.model3 = synthetic_peak(30000, 0.25, 1.0, 75000)
         self.model_use1 = self.model1
         self.model_use2 = self.model2
         self.model_use3 = self.model3

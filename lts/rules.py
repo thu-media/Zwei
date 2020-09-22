@@ -16,12 +16,12 @@ def multi_rules(agent_result):
     return p
     
 def pareto_rules(agent_results):
-    r_0, b_0 = agent_results[0]
-    r_1, b_1 = agent_results[1]
-    _tmp = [0., 0.]
+    r_0, b_0, _ = agent_results[0]
+    r_1, b_1, _ = agent_results[1]
+    _tmp = [-1., -1.]
     if np.abs(b_0 - b_1) < 1e-2 and np.abs(r_0 - r_1) < 10.:
-        _idx = np.random.randint(2)
-        _tmp[_idx] = 1.
+        _tmp = [0., 0.]
+        return _tmp
     elif np.abs(b_0 - b_1) < 1e-2:
         _tmp[np.argmax([r_0, r_1])] = 1.
     else:

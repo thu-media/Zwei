@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from ltsenv import LTSEnv
-import network
+import dualppo as network
 import sys
 
 
@@ -27,10 +27,8 @@ def main():
         for step in range(1440):
 
             action_prob = actor.predict(np.reshape(obs, (1, S_DIM[0], S_DIM[1])))
-            # action_cumsum = np.cumsum(action_prob)
-            print(action_prob)
+
             a = np.argmax(action_prob)
-            #(action_cumsum > np.random.randint(1, RAND_RANGE) / float(RAND_RANGE)).argmax()
 
             obs, rew, done, info = env.step(a)
 
