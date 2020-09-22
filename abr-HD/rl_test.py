@@ -5,7 +5,7 @@ import numpy as np
 import tensorflow as tf
 import load_trace
 # import network_ppo_naive as network
-import lsac as network
+import dualppo as network
 import fixed_env as env
 
 
@@ -133,12 +133,12 @@ def main():
             state[5, -1] = np.minimum(video_chunk_remain, CHUNK_TIL_VIDEO_END_CAP) / float(CHUNK_TIL_VIDEO_END_CAP)
 
             action_prob = actor.predict(np.reshape(state, (1, S_INFO, S_LEN)))
-            action_cumsum = np.cumsum(action_prob)
-            bit_rate = (action_cumsum > np.random.randint(1, RAND_RANGE) / float(RAND_RANGE)).argmax()
+            # action_cumsum = np.cumsum(action_prob)
+            # bit_rate = (action_cumsum > np.random.randint(1, RAND_RANGE) / float(RAND_RANGE)).argmax()
             # Note: we need to discretize the probability into 1/RAND_RANGE steps,
             # because there is an intrinsic discrepancy in passing single state and batch states
             # print(action_prob)
-            # bit_rate = np.argmax(action_prob)
+            bit_rate = np.argmax(action_prob)
             s_batch.append(state)
             entropy_ = -np.dot(action_prob, np.log(action_prob))
             entropy_record.append(entropy_)

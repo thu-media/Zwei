@@ -105,8 +105,7 @@ class Network():
         return action[0]
 
     def set_entropy_decay(self, decay = 0.8):
-        pass
-        #self._entropy *= decay
+        self._entropy *= decay
 
     def get_entropy(self, step):
         return self._entropy

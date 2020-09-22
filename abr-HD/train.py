@@ -5,7 +5,7 @@ import os
 import sys
 from abr import ABREnv
 # import network_ppo_naive as network
-import lsac as network
+import dualppo as network
 import tensorflow as tf
 import rules
 import tracepool
@@ -23,12 +23,12 @@ TRAIN_EPOCH = 1000000
 MODEL_SAVE_INTERVAL = 100
 RANDOM_SEED = 42
 RAND_RANGE = 10000
-SUMMARY_DIR = './lsac-1e-3'
+SUMMARY_DIR = './dualppo-argmax-round-32'
 MODEL_DIR = './models'
 TRAIN_TRACES = './cooked_traces/'
 TEST_LOG_FOLDER = './test_results/'
-LOG_FILE = './lsac-1e-3/log'
-BATTLE_ROUND = 16
+LOG_FILE = './dualppo-argmax-round-32/log'
+BATTLE_ROUND = 32
 
 # create result directory
 if not os.path.exists(SUMMARY_DIR):
