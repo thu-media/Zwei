@@ -54,7 +54,7 @@ ax1.set_ylabel('ELO')
 ax1.set_xlabel('Step')
 l4 = ax1.plot(_a, color='darkblue', lw=LW, alpha=0.3)
 l4 = ax1.plot(moving_average(_a), color='black', lw=LW, label='Zwei')
-_label = ['Rate-based', 'Buffer-based', 'MPC', 'HYB', 'Pensieve', 'BOLA']
+_label = ['Rate-based', 'Buffer-based', 'MPC', 'HYB', 'Pensieve', 'Comyco']
 _color = ['darkred', 'darkblue', 'salmon', 'gray', 'pink', 'darkgreen']
 
 for index, p in enumerate(_tmp):

@@ -13,6 +13,7 @@ PACKET_PAYLOAD_PORTION = 0.95
 LINK_RTT = 80  # millisec
 PACKET_SIZE = 1500  # bytes
 VIDEO_SIZE_FILE = './envivo/video_size_'
+VIDEO_QUALITY_FILE = './envivio/vmaf/video_'
 
 
 class Environment:
@@ -45,12 +46,20 @@ class Environment:
                 for line in f:
                     self.video_size[bitrate].append(int(line.split()[0]))
 
+        self.video_vmaf = {}  # in bytes
+        for bitrate in range(BITRATE_LEVELS):
+            self.video_vmaf[bitrate] = []
+            with open(VIDEO_QUALITY_FILE + str(bitrate)) as f:
+                for line in f:
+                    self.video_vmaf[bitrate].append(float(line.split()[0]))
+
     def get_video_chunk(self, quality):
 
         assert quality >= 0
         assert quality < BITRATE_LEVELS
 
         video_chunk_size = self.video_size[quality][self.video_chunk_counter]
+        video_chunk_vmaf = self.video_vmaf[quality][self.video_chunk_counter]
 
         # use the delivery opportunity in mahimahi
         delay = 0.0  # in ms
@@ -152,6 +161,10 @@ class Environment:
         next_video_chunk_sizes = []
         for i in range(BITRATE_LEVELS):
             next_video_chunk_sizes.append(self.video_size[i][self.video_chunk_counter])
+            
+        next_video_chunk_vmaf = []
+        for i in range(BITRATE_LEVELS):
+            next_video_chunk_vmaf.append(self.video_vmaf[i][self.video_chunk_counter])
 
         return delay, \
             sleep_time, \

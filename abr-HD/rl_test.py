@@ -88,7 +88,9 @@ def main():
             # this is to make the framework similar to the real
             delay, sleep_time, buffer_size, rebuf, \
             video_chunk_size, next_video_chunk_sizes, \
-            end_of_video, video_chunk_remain = \
+            next_video_chunk_vmaf, \
+            end_of_video, video_chunk_remain, \
+            video_chunk_vmaf = \
                 net_env.get_video_chunk(bit_rate)
 
             time_stamp += delay  # in ms
@@ -130,15 +132,12 @@ def main():
             state[2, -1] = float(video_chunk_size) / float(delay) / M_IN_K  # kilo byte / ms
             state[3, -1] = float(delay) / M_IN_K / BUFFER_NORM_FACTOR  # 10 sec
             state[4, :A_DIM] = np.array(next_video_chunk_sizes) / M_IN_K / M_IN_K  # mega byte
-            state[5, -1] = np.minimum(video_chunk_remain, CHUNK_TIL_VIDEO_END_CAP) / float(CHUNK_TIL_VIDEO_END_CAP)
+            state[5, :A_DIM] = np.array(next_video_chunk_vmaf) / 100.
+            state[6, -1] = np.minimum(video_chunk_remain, CHUNK_TIL_VIDEO_END_CAP) / float(CHUNK_TIL_VIDEO_END_CAP)
 
             action_prob = actor.predict(np.reshape(state, (1, S_INFO, S_LEN)))
-            action_cumsum = np.cumsum(action_prob)
-            bit_rate = (action_cumsum > np.random.randint(1, RAND_RANGE) / float(RAND_RANGE)).argmax()
-            # Note: we need to discretize the probability into 1/RAND_RANGE steps,
-            # because there is an intrinsic discrepancy in passing single state and batch states
-            # print(action_prob)
-            # bit_rate = np.argmax(action_prob)
+            bit_rate = np.argmax(action_prob)
+            
             s_batch.append(state)
             entropy_ = -np.dot(action_prob, np.log(action_prob))
             entropy_record.append(entropy_)

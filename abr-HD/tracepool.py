@@ -5,7 +5,7 @@ from rules import rules, update_elo, update_elo_2
 class tracepool(object):
     def __init__(self, testdir='./cooked_test_traces/'):
         self.test_dir = testdir
-        self.abr_list = ['rb', 'bb', 'rmpc', 'hyb', 'rl']
+        self.abr_list = ['rb', 'bb', 'rmpc', 'hyb', 'rl', 'cmc']
         #[sabre.ThroughputRule, sabre.ConstrainRule]
         self.sample_list = []
         self.trace_list = []
@@ -25,13 +25,13 @@ class tracepool(object):
         print('generating samples')
         for _trace in self.get_test_set():
             for _index, _abr in enumerate(self.abr_list):
-                _f = open('./norway/log_sim_' + _abr + '_' + _trace, 'r')
+                _f = open('./norway_vmaf/log_sim_' + _abr + '_' + _trace, 'r')
                 _bitrate, _rebuffer = [], []
                 for lines in _f:
                     #110.64486915972032	2850	19.235901151929067	0.0	1341201	5257.885326692943	0.5	2.85
                     sp = lines.split()
                     if(len(sp) > 0):
-                        _bitrate.append(float(sp[1]))
+                        _bitrate.append(float(sp[-1]))
                         _rebuffer.append(float(sp[3]))
                 _bitrate_mean = np.mean(_bitrate[1:])
                 _rebuffer_mean = np.mean(_rebuffer[1:])

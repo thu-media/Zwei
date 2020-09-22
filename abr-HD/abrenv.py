@@ -51,10 +51,10 @@ class Environment:
 
         self.video_vmaf = {}  # in bytes
         for bitrate in range(BITRATE_LEVELS):
-            self.video_size[bitrate] = []
+            self.video_vmaf[bitrate] = []
             with open(VIDEO_QUALITY_FILE + str(bitrate)) as f:
                 for line in f:
-                    self.video_size[bitrate].append(int(line.split()[0]))
+                    self.video_vmaf[bitrate].append(float(line.split()[0]))
 
     def randomize(self):
         # pick a random trace file
