@@ -12,7 +12,7 @@ DRAIN_BUFFER_SLEEP_TIME = 500.0  # millisec
 PACKET_PAYLOAD_PORTION = 0.95
 LINK_RTT = 80  # millisec
 PACKET_SIZE = 1500  # bytes
-VIDEO_SIZE_FILE = './envivo/video_size_'
+VIDEO_SIZE_FILE = './envivio/size/video_size_'
 VIDEO_QUALITY_FILE = './envivio/vmaf/video_'
 
 
@@ -172,5 +172,7 @@ class Environment:
             rebuf / MILLISECONDS_IN_SECOND, \
             video_chunk_size, \
             next_video_chunk_sizes, \
+            next_video_chunk_vmaf, \
             end_of_video, \
-            video_chunk_remain
+            video_chunk_remain, \
+            video_chunk_vmaf

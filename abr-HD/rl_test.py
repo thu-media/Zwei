@@ -114,7 +114,8 @@ def main():
                            str(video_chunk_size) + '\t' +
                            str(delay) + '\t' +
                            str(entropy_) + '\t' + 
-                           str(reward) + '\n')
+                           str(reward) + '\t' + 
+                           str(video_chunk_vmaf) + '\n')
             log_file.flush()
 
             # retrieve previous state
@@ -127,7 +128,7 @@ def main():
             state = np.roll(state, -1, axis=1)
 
             # this should be S_INFO number of terms
-            state[0, -1] = VIDEO_BIT_RATE[bit_rate] / float(np.max(VIDEO_BIT_RATE))  # last quality
+            state[0, -1] = video_chunk_vmaf / 100. # VIDEO_BIT_RATE[bit_rate] / float(np.max(VIDEO_BIT_RATE))  # last quality
             state[1, -1] = buffer_size / BUFFER_NORM_FACTOR  # 10 sec
             state[2, -1] = float(video_chunk_size) / float(delay) / M_IN_K  # kilo byte / ms
             state[3, -1] = float(delay) / M_IN_K / BUFFER_NORM_FACTOR  # 10 sec

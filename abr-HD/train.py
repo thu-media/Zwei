@@ -23,11 +23,11 @@ TRAIN_EPOCH = 1000000
 MODEL_SAVE_INTERVAL = 100
 RANDOM_SEED = 42
 RAND_RANGE = 10000
-SUMMARY_DIR = './lsac-1e-3'
+SUMMARY_DIR = './zwei-vmaf'
 MODEL_DIR = './models'
 TRAIN_TRACES = './cooked_traces/'
 TEST_LOG_FOLDER = './test_results/'
-LOG_FILE = './lsac-1e-3/log'
+LOG_FILE = './zwei-vmaf/log'
 BATTLE_ROUND = 16
 
 # create result directory
@@ -62,8 +62,8 @@ def testing(epoch, pool, nn_model, log_file):
                 #110.64486915972032	2850	19.235901151929067	0.0	1341201	5257.885326692943	0.5	2.85
                 sp = lines.split()
                 if(len(sp) > 0):
-                    entropy.append(float(sp[-2]))
-                    _bitrate.append(float(sp[1]))
+                    entropy.append(float(sp[-3]))
+                    _bitrate.append(float(sp[-1]))
                     _rebuffer.append(float(sp[3]))
             _bitrate_mean = np.mean(_bitrate[1:])
             _rebuffer_mean = np.mean(_rebuffer[1:])
